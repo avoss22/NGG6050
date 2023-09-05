@@ -1,0 +1,55 @@
+---
+title: "QuantNeuro HW 1: Bayesian vs Frequentist Statistics"
+author: "Anna Voss"
+date: "`r Sys.Date()`"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Background
+
+"Imagine running an HIV test on A SAMPLE of 1000 persons ..."
+
+"The test has a false positive rate of 5% (0.05)..."
+i.e., the probability that someone who takes the test gets a POSITIVE result
+despite the fact that the person does NOT have HIV
+
+"...and no false negative rate." i.e., The probability that someone who takes
+the test gets a NEGATIVE result despite the fact that the person DOES have HIV.
+
+
+# Exercise #1:
+
+If someone gets a positive test, is it "statistically significant" at the p<0.05 level? Why or why not?
+
+At the p<0.05 level, a positive test is considered statistically significant according to frequentist statistics. This is based on the alpha value/false positive rate of this test = 0.05. This value is interpreted to mean that there is a 5% chance of a Type 1 error, i.e. that the positive test was a result of chance (false positive). Given this "alpha" significance of value of 0.05, a positive test has a statistical significance of p = 0.05, so we reject the null hypothesis that the test results do not indicate an HIV infection and conclude that the test is statistically significant at the 0.05 level. 
+
+# Exercise #2: 
+
+What is the probability that if someone gets a positive test, that person is infected?
+
+Following Bayes' Rule, we know that: 
+
+p(Hypothesis | Data) = p(Data | Hypothesis) * p(Hypothesis) / p(Data)
+
+For our purposes this translates to: 
+
+p(HIV Infection | Positive HIV test) <- p(Positive HIV Test | HIV Infection) * Infection Rate / ((Infection rate * 1 - False positive test rate) + (1 - Infection Rate) * False positive test rate) 
+
+Note that the first half of the denominator is the same as the numerator, and the second half of the denominator is simply the reverse of the numerator to account for the inverse situation. 
+
+
+```{r bayes theorem application}
+#For this exercise, assume a range of priors (infection rates) from 0 to 1 in steps of 0.1.
+infection_rate <- seq(from = 0, to = 1, by = 0.1)
+false_positive_rate <- 0.05
+
+for(i in infection_rate){
+  p_positive_test_given_hypothesis <- 1 - false_positive_rate
+  probability_of_infection <- p_positive_test_given_hypothesis * i / ((i * (1 - false_positive_rate)) + ((1 - i) * false_positive_rate))
+  cat("Infection rate =", i,", Probability of infection given a positive test =",probability_of_infection, "\n")
+}
+ 
+```
+
